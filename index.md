@@ -1,7 +1,6 @@
 ---
 layout: page
-title: About Pixyll
-permalink: /about/
+title: Home
 ---
 
 **Hello! I'm Derek.**
