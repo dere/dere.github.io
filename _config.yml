@@ -8,6 +8,15 @@ url:         "https://dere.github.io/"
 date_format: "%b %-d, %Y"
 permalink:   /:year-:month-:day/:title/
 
+# Navigation
+nav:
+    - title: "Blog"
+      link: "/blog/"
+    - title: "Resume"
+      link: "derek-maciel-resume.pdf"
+    - title: "Email me"
+      link: "/email/"
+    
 # Google services
 google_verification:
 # Use either direct GA implementation or set up GTM account
