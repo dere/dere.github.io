@@ -4,7 +4,7 @@ email:
 author:      Derek Maciel
 description: "Derek Maciel's site and blog"
 baseurl:     ""
-url:         "https://dere.github.io/"
+url:         "https://dere.github.io"
 date_format: "%b %-d, %Y"
 permalink:   /:year-:month-:day/:title/
 
