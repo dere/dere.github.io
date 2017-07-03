@@ -1,6 +1,7 @@
 ---
 layout: page
 title: Home
+permalink: /
 ---
 
 **Hello! I'm Derek.**
