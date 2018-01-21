@@ -1,6 +1,7 @@
 ---
 layout: page
-permalink: /
+title: About
+permalink: /about/
 ---
 
 **Hello! I'm Derek.**

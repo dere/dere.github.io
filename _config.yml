@@ -10,8 +10,8 @@ date_format: "%b %-d, %Y"
 
 # Navigation
 nav:
-    - title: "Blog"
-      link: "/blog/"
+    - title: "About"
+      link: "/about/"
     - title: "Resume"
       link: "derek-maciel-resume.pdf"
     - title: "Email me"
@@ -125,7 +125,7 @@ markdown:     kramdown
 redcarpet:
   extensions: ['smart', 'tables', 'with_toc_data']
 permalink:   /:year-:month-:day/:title/
-paginate:     4
+paginate:     20
 paginate_path: "/blog/page:num/"
 sass:
   style: compressed

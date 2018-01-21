@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>A Beginner's Guide to x86 Assembly, Part 1 of 2 &#8211; /dev/zero</title>
+    <link rel="dns-prefetch" href="//maxcdn.bootstrapcdn.com">
+    <link rel="dns-prefetch" href="//cdn.mathjax.org">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Derek Maciel's site and blog">
+    <meta name="robots" content="all">
+    <meta name="author" content="Derek Maciel">
+    
+    <meta name="keywords" content="">
+    <link rel="canonical" href="http://localhost:4000/2017-02-12/beginners-assembly-part1/">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for /dev/zero" href="/feed.xml" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/pixyll.css?201801202041" type="text/css">
+
+    <!-- Fonts -->
+    
+    <link href='//fonts.googleapis.com/css?family=Merriweather:900,900italic,300,300italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Lato:900,300' rel='stylesheet' type='text/css'>
+    
+    
+
+    <!-- MathJax -->
+    
+
+    <!-- Verifications -->
+    
+    
+
+    <!-- Open Graph -->
+    <!-- From: https://github.com/mmistakes/hpstr-jekyll-theme/blob/master/_includes/head.html -->
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="A Beginner's Guide to x86 Assembly, Part 1 of 2">
+    <meta property="og:description" content="In this two-part article we will be implementing a Reverse Polish notation (RPN) calculator in base x86 assembly.">
+    <meta property="og:url" content="http://localhost:4000/2017-02-12/beginners-assembly-part1/">
+    <meta property="og:site_name" content="/dev/zero">
+    
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    
+    <meta name="twitter:title" content="A Beginner's Guide to x86 Assembly, Part 1 of 2" />
+    <meta name="twitter:description" content="Derek Maciel's site and blog" />
+    <meta name="twitter:url" content="http://localhost:4000/2017-02-12/beginners-assembly-part1/" />
+    
+
+    <!-- Icons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="/favicon-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="/favicon-160x160.png" sizes="160x160">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+
+    
+    <script type="text/javascript">
+       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+       ga('create', 'UA-41086430-1', 'auto');
+       ga('send', 'pageview');
+    </script>
+    
+</head>
+
+<body class="site">
+  
+	
+
+  <div class="site-wrap">
+    <header class="site-header px2 px-responsive">
+  <div class="mt2 wrap">
+    <div class="measure">
+      <a href="http://localhost:4000" class="site-title">/dev/zero</a>
+      <nav class="site-nav">
+        
+    <a href="http://localhost:4000/about/">About</a>
+
+    <a href="http://localhost:4000/derek-maciel-resume.pdf">Resume</a>
+
+    <a href="http://localhost:4000/email/">Email me</a>
+
+
+      </nav>
+      <div class="clearfix"></div>
+      
+    </div>
+  </div>
+</header>
+
+
+    <div class="post p2 p-responsive wrap" role="main">
+      <div class="measure">
+        
+
+
+<div class="post-header mb2">
+  <h1>A Beginner's Guide to x86 Assembly, Part 1 of 2</h1>
+  <span class="post-meta">Feb 12, 2017</span><br>
+  
+  <span class="post-meta small">
+  
+    18 minute read
+  
+  </span>
+</div>
+
+<article class="post-content">
+  <p>Writing bare assembly is rarely necessary these days, but I definitely recommend it for anyone interested in programming. Not only does it offer a different perspective compared to higher-level languages, but it may prove to be useful when debugging code in other languages.</p>
+
+<p>In this two-part series we will be implementing a <a href="https://en.wikipedia.org/wiki/Reverse_Polish_notation">Reverse Polish notation (RPN)</a> calculator in bare x86 assembly from the ground up. When we’re done we’ll be able to use it like this:</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>./calc <span class="s2">"32+6*"</span> <span class="c"># "(3+2)*6" in infix notation</span>
+30
+</code></pre>
+</div>
+
+<p>The complete code from the end of Part 1 can be found <a href="https://gist.github.com/dere/79dca38ccc2a5e263d0635f1b7737ec9">here</a>. Additionally, if you feel like taking a peek, the complete code from the end of this series can be found <a href="https://gist.github.com/dere/9dff75a67710207e16cd6a8531393ccf">here</a>. It is heavily commented and these two may serve as a sufficient learning resource for those of you with some knowledge of assembly already.</p>
+
+<p>In Part 1 we will begin with a basic “Hello world!” program to ensure your setup is working properly. We will progress to explaining system calls, call stack, stack frames, and the x86 calling convention. We will then finish by writing some basic functions in x86 assembly for practice. In Part 2 we we will begin our RPN calculator from scratch.</p>
+
+<p>This article series is aimed at people who have some experience programming in C and have some basic knowledge of computer architecture (such as what a CPU register is). Since we will be using Linux you will also need to know how to use the Linux command line.</p>
+
+<h2 id="setup">Setup</h2>
+
+<p>As stated before, we will be using Linux (either 64-bit or 32-bit). The code in this article series will not work on Windows or Mac OS X.</p>
+
+<p>You simply need the GNU linker <code class="highlighter-rouge">ld</code> from <code class="highlighter-rouge">binutils</code>, which is pre-installed on most distros, and the NASM assembler. On Ubuntu and Debian you can install both with:</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>sudo apt-get install binutils nasm
+</code></pre>
+</div>
+
+<p>I would also recommend you keep an <a href="http://www.asciitable.com/">ASCII table</a> handy.</p>
+
+<h2 id="hello-world">Hello world</h2>
+
+<p>To ensure your setup is ready to begin, save the following code into a file called <code class="highlighter-rouge">calc.asm</code>:</p>
+
+<div class="language-nasm highlighter-rouge"><pre class="highlight"><code><span class="c">; Allow the linker to find the _start symbol. The linker will begin program execution</span>
+<span class="c">; there.</span>
+<span class="kr">global</span> <span class="n">_start</span>
+
+<span class="c">; Start the .rodata section of the executable, which stores constants (read only data)</span>
+<span class="c">; It doesn't matter which order your sections are in, I just like putting .data first</span>
+<span class="kr">section</span> <span class="p">.</span><span class="n">rodata</span>
+    <span class="c">; Declare some bytes at a symbol called hello_world. NASM's db pseudo-instruction</span>
+    <span class="c">; allows either a single byte value, a constant string, or a combination of the two</span>
+    <span class="c">; as seen here. 0xA = new line, and 0x0 = string-terminating null</span>
+    <span class="n">hello_world</span><span class="o">:</span> <span class="kt">db</span> <span class="s">"Hello world!"</span><span class="p">,</span> <span class="mh">0xA</span><span class="p">,</span> <span class="mh">0x0</span>
+
+<span class="c">; Start the .text section, which stores program code</span>
+<span class="kr">section</span> <span class="p">.</span><span class="n">text</span>
+<span class="n">_start</span><span class="o">:</span>
+    <span class="k">mov</span> <span class="n">eax</span><span class="p">,</span> <span class="mh">0x04</span>           <span class="c">; store the number 4 in the eax register (0x04 = write())</span>
+    <span class="k">mov</span> <span class="n">ebx</span><span class="p">,</span> <span class="mh">0x1</span>            <span class="c">; file descriptor (1 = standard output, 2 = standard error)</span>
+    <span class="k">mov</span> <span class="n">ecx</span><span class="p">,</span> <span class="n">hello_world</span>    <span class="c">; pointer to the string we're printing</span>
+    <span class="k">mov</span> <span class="n">edx</span><span class="p">,</span> <span class="mi">14</span>             <span class="c">; length of the string</span>
+    <span class="k">int</span> <span class="mh">0x80</span>                <span class="c">; send the interrupt signal 0x80 which the OS interprets as</span>
+                            <span class="c">;   a syscall</span>
+
+    <span class="k">mov</span> <span class="n">eax</span><span class="p">,</span> <span class="mh">0x01</span>           <span class="c">; 0x01 = exit()</span>
+    <span class="k">mov</span> <span class="n">ebx</span><span class="p">,</span> <span class="mi">0</span>              <span class="c">; 0 = no errors</span>
+    <span class="k">int</span> <span class="mh">0x80</span>
+</code></pre>
+</div>
+
+<p>The comments should explain the general strucure, but you are probably a bit confused on how it works. If you are confused about the instructions or the registers used, you can reference <a href="http://www.cs.virginia.edu/~evans/cs216/guides/x86.html">University of Virginia’s Guide to x86 Assembly</a> for a list of registers and common instructions. Once we discuss system calls this should hopefully make even more sense.</p>
+
+<p>To assemble the assembly file into an object file, then to link the object file into an executable, run:</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>nasm -f elf_i386 calc.asm -o calc
+<span class="gp">$ </span>ld -m elf_i386 calc.o -o calc
+</code></pre>
+</div>
+
+<p>When run you should see:</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>./calc
+Hello world!
+</code></pre>
+</div>
+
+<h3 id="makefile">Makefile</h3>
+
+<p>This part is optional, but to easily assemble and link in the future, we can create use Make. Save the following into a file called <code class="highlighter-rouge">Makefile</code> in the same directory as your <code class="highlighter-rouge">calc.asm</code> file:</p>
+
+<div class="language-makefile highlighter-rouge"><pre class="highlight"><code><span class="nv">CFLAGS</span><span class="o">=</span> -f elf32
+<span class="nv">LFLAGS</span><span class="o">=</span> -m elf_i386
+
+<span class="nl">all</span><span class="o">:</span> <span class="nf">calc</span>
+
+<span class="nl">calc</span><span class="o">:</span> <span class="nf">calc.o</span>
+	ld <span class="nv">$(LFLAGS)</span> calc.o -o calc
+
+<span class="nl">calc.o</span><span class="o">:</span> <span class="nf">calc.asm</span>
+	nasm <span class="nv">$(CFLAGS)</span> calc.asm -o calc.o
+
+<span class="nl">clean</span><span class="o">:</span>
+	rm -f calc.o calc
+        
+<span class="nl">.INTERMEDIATE</span><span class="o">:</span> <span class="nf">calc.o</span>
+</code></pre>
+</div>
+
+<p>Then to assemble and link, instead of following the above instructions, you can simply run <code class="highlighter-rouge">make</code>.</p>
+
+<h2 id="system-calls">System calls</h2>
+
+<p>System calls are used to request the operating system to perform an action for us. In this article, we will only be using two system calls<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>: <code class="highlighter-rouge">write()</code>, which writes a string to a file or stream (in our case, to standard out and standard error), and <code class="highlighter-rouge">exit()</code>, to exit the program:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>syscall 0x01: exit(int error_code)
+  error_code - use 0 to exit without errors, and use anything else (such as 1) for errors
+syscall 0x04: write(int fd, char *string, int length)
+  fd - use 1 for standard output, 2 for standard error output
+  string - a pointer to the first character of the string
+  length - the length of the string in bytes
+</code></pre>
+</div>
+
+<p>System calls are set up by storing the system call number in register <code class="highlighter-rouge">eax</code>, followed by its arguments in <code class="highlighter-rouge">ebx</code>, <code class="highlighter-rouge">ecx</code>, <code class="highlighter-rouge">edx</code> in that order. You may notice <code class="highlighter-rouge">exit()</code> only has one argument – in that case, it doesn’t matter what value <code class="highlighter-rouge">ecx</code> and <code class="highlighter-rouge">edx</code> have.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">eax</th>
+      <th style="text-align: center">ebx</th>
+      <th style="text-align: center">ecx</th>
+      <th style="text-align: center">edx</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">syscall number</td>
+      <td style="text-align: center">arg1</td>
+      <td style="text-align: center">arg2</td>
+      <td style="text-align: center">arg3</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="the-call-stack">The call stack</h2>
+
+<p><img src="/images/2017-02-12-beginners-assembly/callstack.png" alt="The call stack" class="center-image" /></p>
+
+<p>The call stack is a data structure that stores information about each function call. Each function call has its own section in the stack called a “frame,” which stores some information about the current function call, such as the local variables of that function and the return address (where the program should jump to once the function is done executing).</p>
+
+<p>One confusing thing that I will note immediately is that the stack grows <em>downwards</em> in memory. When you add something to the top of the stack, it will be inserted at a memory address lower than the previous thing in the stack. In other words, as the stack grows, the memory address of the top of the stack decreases. To prevent confusion, I will not mention that fact unless it is absolutely necessary because we are working with memory addresses of items on the stack.</p>
+
+<p>The <code class="highlighter-rouge">push</code> instruction will insert some onto the top of the stack, and <code class="highlighter-rouge">pop</code> will remove data from the top of the stack. For example, <code class="highlighter-rouge">push eax</code> will allocate more space on the top of the stack and move the value in <code class="highlighter-rouge">eax</code> to that space, and <code class="highlighter-rouge">pop eax</code> will move whatever data is at the top of the stack into <code class="highlighter-rouge">eax</code> and unallocate that space from the stack.</p>
+
+<p>The <code class="highlighter-rouge">esp</code> register’s purpose is to point to the top of the stack. Any data above <code class="highlighter-rouge">esp</code> is considered not on the stack, it is garbage data. Performing a <code class="highlighter-rouge">push</code> instruction to add data to the top of the stack (or a <code class="highlighter-rouge">pop</code> to remove data) will move <code class="highlighter-rouge">esp</code>. You can also manipulate <code class="highlighter-rouge">esp</code> directly if you know what you’re doing.</p>
+
+<p>The <code class="highlighter-rouge">ebp</code> register is similar except it always points somewhere in the middle of the current stack frame, directly before the local variables of the current function (we’ll talk more about this later). However, calling another function does not move <code class="highlighter-rouge">ebp</code> automatically, we must do that manually each time.</p>
+
+<h2 id="the-x86-calling-convention">The x86 calling convention</h2>
+
+<p>x86 has no built-in notion of a function like higher-level languages do. The x86 <code class="highlighter-rouge">call</code> instruction is essentially just a <code class="highlighter-rouge">jmp</code> (a <code class="highlighter-rouge">goto</code>) to another place in memory. In order to use subroutines like we use functions in other languages (which can take arguments and return data back), we must follow a calling convention<sup id="fnref:2"><a href="#fn:2" class="footnote">2</a></sup>. That will also ensure that a subroutine’s registers will not be messed up when calling another function.</p>
+
+<h3 id="caller-rules">Caller rules</h3>
+
+<p>Before calling the function, the caller must:</p>
+
+<ol>
+  <li>Save the <em>caller-saved registers</em> by pushing them onto the stack. Some registers are able to be modified by the called function, and to ensure you do not lose the data in those registers, the caller must save them in memory before the call by pushing them onto the stack. These registers are <code class="highlighter-rouge">eax</code>, <code class="highlighter-rouge">ecx</code>, and <code class="highlighter-rouge">edx</code>. If you were not using some or all of those registers then you do not need to save them.</li>
+  <li>Push the function’s arguments onto the stack in reverse order (pushing the last argument first and the first argument last). This order ensures that the called function will have its arguments in correct order when popping them from the stack.</li>
+  <li><code class="highlighter-rouge">call</code> the subroutine.</li>
+</ol>
+
+<p>The function will store its result in <code class="highlighter-rouge">eax</code> if applicable. Immediately after the <code class="highlighter-rouge">call</code>, the caller must:</p>
+
+<ol>
+  <li>Remove the function’s arguments from the stack. This is typically done by simply adding the number of bytes to <code class="highlighter-rouge">esp</code>. Don’t forget that the stack grows downward, so to remove from the stack you must add.</li>
+  <li>Restore the caller-saved registers by popping them from the stack in reverse order. No other registers will have been modified by the called function.</li>
+</ol>
+
+<p>The following example sums up the above caller rules. In this example, assume I have a function called <code class="highlighter-rouge">_subtract</code> which takes two integer (4-byte) arguments and returns the first argument minus the second argument. In my subroutine called <code class="highlighter-rouge">_mysubroutine</code>, I call <code class="highlighter-rouge">_subtract</code> with the arguments <code class="highlighter-rouge">10</code> and <code class="highlighter-rouge">2</code>:</p>
+
+<div class="language-nasm highlighter-rouge"><pre class="highlight"><code><span class="n">_mysubroutine</span><span class="o">:</span>
+    <span class="c">; ...</span>
+    <span class="c">; some code here</span>
+    <span class="c">; ...</span>
+    <span class="k">push</span> <span class="n">ecx</span>       <span class="c">; save the caller-saved registers (I choose to not save eax)</span>
+    <span class="k">push</span> <span class="n">edx</span>
+    <span class="k">push</span> <span class="mi">2</span>         <span class="c">; rule 2, push args in reverse order</span>
+    <span class="k">push</span> <span class="mi">10</span>
+    <span class="k">call</span> <span class="n">_subtract</span> <span class="c">; eax is now equal to 10-2=8</span>
+    <span class="k">add</span> <span class="n">esp</span><span class="p">,</span> <span class="mi">8</span>     <span class="c">; remove 8 bytes from the stack (2 arguments, 4 bytes each)</span>
+    <span class="k">pop</span> <span class="n">edx</span>        <span class="c">; restore caller-saved registers</span>
+    <span class="k">pop</span> <span class="n">ecx</span>
+    <span class="c">; ...</span>
+    <span class="c">; some code here where I use my amazingly-useful value in eax</span>
+    <span class="c">; ...</span>
+</code></pre>
+</div>
+
+<h3 id="callee-rules">Callee rules</h3>
+
+<p>In order to be called, a subroutine must:</p>
+
+<ol>
+  <li>Save the previous frame’s base pointer <code class="highlighter-rouge">ebp</code> by pushing it onto the stack.</li>
+  <li>Adjust <code class="highlighter-rouge">ebp</code>, which currently points to the previous frame, to point to the current frame (the current value of <code class="highlighter-rouge">esp</code>).</li>
+  <li>Allocate more space on the stack for local variables, if necessary, by moving the stack pointer <code class="highlighter-rouge">esp</code>. Since the stack growns downwards, that means you should subtract from <code class="highlighter-rouge">esp</code>.</li>
+  <li>Save the <em>callee-saved registers</em> by pushing them onto the stack. These are: <code class="highlighter-rouge">ebx</code>, <code class="highlighter-rouge">edi</code>, and <code class="highlighter-rouge">esi</code>. You do not have to save any registers you are not planning on modifying.</li>
+</ol>
+
+<p>The call stack after step 1:</p>
+
+<p><img src="/images/2017-02-12-beginners-assembly/callee-rules-step1.png" alt="The stack after step 1" class="center-image" /></p>
+
+<p>The call stack after step 2:</p>
+
+<p><img src="/images/2017-02-12-beginners-assembly/callee-rules-step2.png" alt="The stack after step 2" class="center-image" /></p>
+
+<p>The call stack once you’re done with step 4:</p>
+
+<p><img src="/images/2017-02-12-beginners-assembly/callee-rules-step4.png" alt="The stack after step 4" class="center-image" /></p>
+
+<p>You may notice a return address in each stack frame in those diagrams. Those are inserted into the stack automatically by <code class="highlighter-rouge">call</code>. A <code class="highlighter-rouge">ret</code> instruction pops the address on the top of the stack and jumps to that location. We don’t have to use it for anything, I only include it to show why the function’s local variables are 4 bytes above <code class="highlighter-rouge">ebp</code> but the function’s arguments are 8 bytes below <code class="highlighter-rouge">ebp</code>.</p>
+
+<p>You may also notice in the last diagram above that the local variables of a function always begin 4 bytes above <code class="highlighter-rouge">ebp</code> at the address <code class="highlighter-rouge">ebp-4</code> (you subtract because addresses go down as you move up the stack) and the arguments of a function always begin 8 bytes below <code class="highlighter-rouge">ebp</code> at the address <code class="highlighter-rouge">ebp+8</code> (you add to move down the stack). If you follow the callee rules, this will always be the case for any function.</p>
+
+<p>Once your function is done executing and you wish to return, you should first set <code class="highlighter-rouge">eax</code> to the return value of your function if necessary. Additionally you must:</p>
+
+<ol>
+  <li>Restore the callee-saved registers by popping them from the stack in reverse order.</li>
+  <li>Deallocate the space on the stack you allocated in step 3 above for local variables, if applicable. This can be done simply by setting <code class="highlighter-rouge">esp</code> to <code class="highlighter-rouge">ebp</code>. This is safe to do even if you didn’t allocate any space in the first place.</li>
+  <li>Restore the previous frame’s base pointer <code class="highlighter-rouge">ebp</code> by popping it from the stack.</li>
+  <li>Return with <code class="highlighter-rouge">ret</code></li>
+</ol>
+
+<p>Now we’ll implement our <code class="highlighter-rouge">_subtract</code> function from our example above:</p>
+
+<div class="language-nasm highlighter-rouge"><pre class="highlight"><code><span class="n">_subtract</span><span class="o">:</span>
+    <span class="k">push</span> <span class="n">ebp</span>            <span class="c">; save the previous frame's base pointer</span>
+    <span class="k">mov</span> <span class="n">ebp</span><span class="p">,</span> <span class="n">esp</span>        <span class="c">; adjust ebp</span>
+    <span class="c">; Here I'd allocate space on the stack for local variables, but I don't need any</span>
+    <span class="c">; Here I'd save the callee-saved registers, but I won't be modifying any</span>
+    <span class="c">; My function begins here</span>
+    <span class="k">mov</span> <span class="n">eax</span><span class="p">,</span> <span class="err">[</span><span class="n">ebp</span><span class="o">+</span><span class="mi">8</span><span class="err">]</span>    <span class="c">; copy the function's first argument into eax. The brackets mean</span>
+                        <span class="c">; to access the data in memory at the location ebp+8</span>
+    <span class="k">sub</span> <span class="n">eax</span><span class="p">,</span> <span class="err">[</span><span class="n">ebp</span><span class="o">+</span><span class="mi">12</span><span class="err">]</span>   <span class="c">; subtract the second argument at ebp+12 from the first argument</span>
+    <span class="c">; My function ends here. eax is equal to my function's return value</span>
+    <span class="c">; Here I'd restore the callee-saved registers, but I didn't save any</span>
+    <span class="c">; Here I'd deallocate variables, but I didn't allocate any</span>
+    <span class="k">pop</span> <span class="n">ebp</span>             <span class="c">; restore the previous frame's base pointer</span>
+    <span class="k">ret</span>
+</code></pre>
+</div>
+
+<h3 id="enter-and-leave"><code class="highlighter-rouge">enter</code> and <code class="highlighter-rouge">leave</code></h3>
+
+<p>You may notice in the example above that a function will always start the same: <code class="highlighter-rouge">push ebp</code>, <code class="highlighter-rouge">mov ebp, esp</code>, and allocating space for local variables. x86 has a handy instruction to accomplish this for us: <code class="highlighter-rouge">enter a b</code>, where <code class="highlighter-rouge">a</code> is the number of bytes you’d like to allocate for local variables, and <code class="highlighter-rouge">b</code> is the “nesting level” which we will always leave at <code class="highlighter-rouge">0</code>. Additionally, a function always ends with <code class="highlighter-rouge">pop ebp</code> and <code class="highlighter-rouge">mov esp, ebp</code><sup id="fnref:3"><a href="#fn:3" class="footnote">3</a></sup>. This can also be replaced with a single instruction: <code class="highlighter-rouge">leave</code>. Using these, our example above becomes:</p>
+
+<div class="language-nasm highlighter-rouge"><pre class="highlight"><code><span class="n">_subtract</span><span class="o">:</span>
+    <span class="k">enter</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>          <span class="c">; save the previous frame's base pointer and adjust ebp</span>
+    <span class="c">; Here I'd save the callee-saved registers, but I won't be modifying any</span>
+    <span class="c">; My function begins here</span>
+    <span class="k">mov</span> <span class="n">eax</span><span class="p">,</span> <span class="err">[</span><span class="n">ebp</span><span class="o">+</span><span class="mi">8</span><span class="err">]</span>    <span class="c">; copy the function's first argument into eax. The brackets mean</span>
+                        <span class="c">; to access the data in memory at the location ebp+8</span>
+    <span class="k">sub</span> <span class="n">eax</span><span class="p">,</span> <span class="err">[</span><span class="n">ebp</span><span class="o">+</span><span class="mi">12</span><span class="err">]</span>   <span class="c">; subtract the second argument at ebp+12 from the first argument</span>
+    <span class="c">; My function ends here. eax is equal to my function's return value</span>
+    <span class="c">; Here I'd restore the callee-saved registers, but I didn't save any</span>
+    <span class="k">leave</span>               <span class="c">; deallocate and restore the previous frame's base pointer</span>
+    <span class="k">ret</span>
+</code></pre>
+</div>
+
+<h2 id="writing-some-basic-functions">Writing some basic functions</h2>
+
+<p>Now that we understand the calling convention, we can begin writing some subroutines. It would be pretty handy to generalizing the code that prints the “Hello world!” to print any string we’d like, a <code class="highlighter-rouge">_print_msg</code> function.</p>
+
+<p>For that function we will need a <code class="highlighter-rouge">_strlen</code> function to count the length of the string. That function might look like this in C:</p>
+
+<div class="language-c highlighter-rouge"><pre class="highlight"><code><span class="kt">size_t</span> <span class="nf">strlen</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">size_t</span> <span class="n">length</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">*</span><span class="n">s</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">{</span>           <span class="c1">// loop start
+</span>        <span class="n">length</span><span class="o">++</span><span class="p">;</span>
+        <span class="n">s</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>           <span class="c1">// loop end
+</span>    <span class="k">return</span> <span class="n">length</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>In other words, starting at the beginning of the string, we add <code class="highlighter-rouge">1</code> to the return value for every character we see that is not the string-terminating null character <code class="highlighter-rouge">0</code>. Once that null character is seen, we return. In assembly it is also pretty simple using our example <code class="highlighter-rouge">_subtract</code> function above as a base:</p>
+
+<div class="language-nasm highlighter-rouge"><pre class="highlight"><code><span class="n">_strlen</span><span class="o">:</span>
+    <span class="k">enter</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>          <span class="c">; save the previous frame's base pointer and adjust ebp</span>
+    <span class="c">; Here I'd save the callee-saved registers, but I won't be modifying any</span>
+    <span class="c">; My function begins here</span>
+    <span class="k">mov</span> <span class="n">eax</span><span class="p">,</span> <span class="mi">0</span>          <span class="c">; length = 0</span>
+    <span class="k">mov</span> <span class="n">ecx</span><span class="p">,</span> <span class="err">[</span><span class="n">ebp</span><span class="o">+</span><span class="mi">8</span><span class="err">]</span>    <span class="c">; copy the function's first argument (pointer to the first </span>
+                        <span class="c">; character of the string) into ecx (which is caller-saved, so </span>
+                        <span class="c">; no need to save it)</span>
+<span class="n">_strlen_loop_start</span><span class="o">:</span>     <span class="c">; this is a label we can jump to</span>
+    <span class="k">cmp</span> <span class="n">byte</span> <span class="p">[ecx],</span> <span class="mi">0</span>   <span class="c">; dereference that pointer and compare it to null. By default,</span>
+                        <span class="c">; many times a memory access will default to reading 32 bits</span>
+                        <span class="c">; (4 bytes) from memory. Other times it will always be</span>
+                        <span class="c">; required. Here we use a Size Directive to only read one byte,</span>
+			<span class="c">; since a character is only one byte</span>
+    <span class="k">je</span> <span class="n">_strlen_loop_end</span> <span class="c">; jump out of the loop if it is equal to null</span>
+    <span class="k">inc</span> <span class="n">eax</span>             <span class="c">; now we're in the loop body. add 1 to our return value</span>
+    <span class="k">add</span> <span class="n">ecx</span><span class="p">,</span> <span class="mi">1</span>          <span class="c">; increment to the next character in the string</span>
+    <span class="k">jmp</span> <span class="n">_strlen_loop_start</span>  <span class="c">; jump back to the top of the loop</span>
+<span class="n">_strlen_loop_end</span><span class="o">:</span>
+    <span class="c">; My function ends here. eax is equal to my function's return value</span>
+    <span class="c">; Here I'd restore the callee-saved registers, but I didn't save any</span>
+    <span class="k">leave</span>               <span class="c">; deallocate and restore the previous frame's base pointer</span>
+    <span class="k">ret</span>
+</code></pre>
+</div>
+
+<p>That wasn’t too bad, right? Writing the code in C beforehand may help you a lot because much of it can be directly converted to assembly. Now we can use this function in our <code class="highlighter-rouge">_print_msg</code> function, which will require everything we’ve learned so far:</p>
+
+<div class="language-nasm highlighter-rouge"><pre class="highlight"><code><span class="n">_print_msg</span><span class="o">:</span>
+    <span class="k">enter</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="c">; My function begins here</span>
+    <span class="k">mov</span> <span class="n">eax</span><span class="p">,</span> <span class="mh">0x04</span>       <span class="c">; 0x04 = the write() syscall</span>
+    <span class="k">mov</span> <span class="n">ebx</span><span class="p">,</span> <span class="mh">0x1</span>        <span class="c">; 0x1 = standard output</span>
+    <span class="k">mov</span> <span class="n">ecx</span><span class="p">,</span> <span class="err">[</span><span class="n">ebp</span><span class="o">+</span><span class="mi">8</span><span class="err">]</span>    <span class="c">; the string we want to print is the first arg of this function</span>
+    <span class="c">; at this point we wish to set edx to the length of the string. time to call _strlen</span>
+    <span class="k">push</span> <span class="n">eax</span>            <span class="c">; save the caller-saved registers (I choose to not save edx)</span>
+    <span class="k">push</span> <span class="n">ecx</span>       
+    <span class="k">push</span> <span class="n">dword</span> <span class="err">[</span><span class="n">ebp</span><span class="o">+</span><span class="mi">8</span><span class="err">]</span>  <span class="c">; push _strlen's argument, the string argument to _print_msg. NASM</span>
+                        <span class="c">; complains if you do not put a size directive here, and I'm not</span>
+                        <span class="c">; sure why. Anyway, a pointer is a dword (4 bytes, 32 bits)</span>
+    <span class="k">call</span> <span class="n">_strlen</span>        <span class="c">; eax is now equal to the length of the string</span>
+    <span class="k">mov</span> <span class="n">edx</span><span class="p">,</span> <span class="n">eax</span>        <span class="c">; move the length into edx where we wanted it</span>
+    <span class="k">add</span> <span class="n">esp</span><span class="p">,</span> <span class="mi">4</span>          <span class="c">; remove 4 bytes from the stack (one 4-byte char* argument)</span>
+    <span class="k">pop</span> <span class="n">ecx</span>             <span class="c">; restore caller-saved registers</span>
+    <span class="k">pop</span> <span class="n">eax</span>
+    <span class="c">; we're done calling _strlen and setting up the syscall</span>
+    <span class="k">int</span> <span class="mh">0x80</span>
+    <span class="k">leave</span>
+    <span class="k">ret</span>
+</code></pre>
+</div>
+
+<p>And lets see the fruit of our hard work by using that function in our complete “Hello world!” program:</p>
+
+<div class="language-nasm highlighter-rouge"><pre class="highlight"><code><span class="n">_start</span><span class="o">:</span>
+    <span class="k">enter</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="c">; save the caller-saved registers (I choose to not save any)</span>
+    <span class="k">push</span> <span class="n">hello_world</span>    <span class="c">; push the argument to _print_msg</span>
+    <span class="k">call</span> <span class="n">_print_msg</span>
+    <span class="k">mov</span> <span class="n">eax</span><span class="p">,</span> <span class="mh">0x01</span>           <span class="c">; 0x01 = exit()</span>
+    <span class="k">mov</span> <span class="n">ebx</span><span class="p">,</span> <span class="mi">0</span>              <span class="c">; 0 = no errors</span>
+    <span class="k">int</span> <span class="mh">0x80</span>
+</code></pre>
+</div>
+
+<p>That is the end of Part 1. Believe it or not, we have covered all the main x86 topics you will need to write basic x86 programs! In the next article we will apply this knowledge to write our RPN calculator. Now that we have all the introductory material and theory out of the way, Part 2 will be focusing entirely on the code. The functions we write will be much longer and will even have to use some local variables as well.</p>
+
+<p>If you’d like to see the complete program up to this point click <a href="https://gist.github.com/dere/79dca38ccc2a5e263d0635f1b7737ec9">here</a>. Thanks for reading! I’ll see you in <a href="/2017-02-13/beginners-assembly-part2/">Part 2</a>.</p>
+
+<h2 id="additional-reading">Additional reading</h2>
+
+<ul>
+  <li><a href="http://www.cs.virginia.edu/~evans/cs216/guides/x86.html">University of Virginia’s Guide to x86 Assembly</a> – Goes more into depth on many of the topics covered here, including more information on each of the most common x86 instructions. A great reference for the most common x86 instructions as well.</li>
+  <li><a href="http://www.swansontec.com/sregisters.html">The Art of Picking Intel Registers</a> – While most of the x86 registers are general-purpose, many of the registers have a historical meaning. Following those conventions can improve code readability, and as an interesting side benefit, will even slightly optimize the size of your binaries.</li>
+  <li><a href="http://www.posix.nl/linuxassembly/nasmdochtml/nasmdoca.html">NASM: Intel x86 Instruction Reference</a> - a full reference to all the obscure x86 instructions.</li>
+</ul>
+<div class="footnotes">
+  <ol>
+    <li id="fn:1">
+      <p>If interested you may find a reference for more Linux system calls <a href="http://syscalls.kernelgrok.com/">here</a>.&nbsp;<a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:2">
+      <p>There are multiple calling conventions, but we will be using CDECL, the most popular calling convention for x86 in use by C compilers and assembly programmers.&nbsp;<a href="#fnref:2" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:3">
+      <p>While <code class="highlighter-rouge">mov esp, ebp</code> is only necessary if you’ve allocated memory on the stack for local variables, as mentioned in point 2 above it is safe to do if you didn’t, so <code class="highlighter-rouge">leave</code> can be used even if you haven’t allocated anything.&nbsp;<a href="#fnref:3" class="reversefootnote">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+</article>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="center">
+  <div class="measure">
+    <small>
+      &copy; Derek Maciel. All rights reserved. Powered by <a href="https://pages.github.com">Github Pages</a> and <a href="https://cloudflare.com">Cloudflare</a>. Theme crafted with &lt;3 by <a href="http://johnotander.com">John Otander</a> (&lt;/&gt; available on <a href="https://github.com/johnotander/pixyll">GitHub</a>).
+    </small>
+  </div>
+</footer>
+
+
+</body>
+</html>
