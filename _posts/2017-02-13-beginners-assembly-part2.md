@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "A Beginner's Guide to x86 Assembly, Part 2 of 2"
-description: "In the final part of this series we will implement the calculator from the ground up."
+description: "In the final part of this series we will use our new knowledge to implement the calculator from the ground up."
 date: 2017-02-13
 tags: [assembly, tutorial]
 comments: true

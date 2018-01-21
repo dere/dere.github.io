@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "An Introduction to the Cache Coherence Problem"
-description: ""
+description: "How does a computer ensure a value in main memory and all of its caches agree?"
 date: 2017-05-31
 tags: [computer architecture]
 comments: true
