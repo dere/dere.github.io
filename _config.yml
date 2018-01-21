@@ -10,12 +10,8 @@ date_format: "%b %-d, %Y"
 
 # Navigation
 nav:
-    - title: "About"
+    - title: "About me"
       link: "/about/"
-    - title: "Resume"
-      link: "derek-maciel-resume.pdf"
-    - title: "Email me"
-      link: "/email/"
     
 # Google services
 google_verification:

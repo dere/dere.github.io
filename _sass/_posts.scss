@@ -27,6 +27,13 @@
   text-align: center;
 }
 
+.footnotes {
+  border-top: 1px solid $border-color;
+  margin-top: $space-3;
+  padding-top: $space-3; 
+}
+
+
 .post-footer .avatar {
   margin: 2rem 0;
   width: 100px;
