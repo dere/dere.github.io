@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "A Beginner's Guide to x86 Assembly, Part 1 of 2"
-description: "In this two-part article we will be implementing a Reverse Polish notation (RPN) calculator in base x86 assembly."
+summary: "In this two-part article we will be implementing a Reverse Polish notation (RPN) calculator in base x86 assembly."
 date: 2017-02-12
 tags: [assembly, tutorial]
 comments: true

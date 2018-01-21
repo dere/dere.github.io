@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "How does the Equifax security breach affect your online accounts?"
-description: "Do your accounts have a single point of failure? Now is as good of a time as any to perform a security audit on your most important online accounts."
+summary: "Do your accounts have a single point of failure? Now is as good of a time as any to perform a security audit on your most important online accounts."
 date: 2017-09-15
 comments: true
 share: true

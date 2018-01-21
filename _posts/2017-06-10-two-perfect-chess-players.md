@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "What would happen if two chess AIs faced each other?"
-description: "If two chess AIs faced each other, what would happen? What if they always played the most optimal move and never made a mistake?"
+summary: "If two chess AIs faced each other, what would happen? What if they always played the most optimal move and never made a mistake?"
 date: 2017-06-10
 comments: true
 share: true
