@@ -13,12 +13,10 @@ Hello! My name is Derek Maciel. This site is called `/dev/zero` because it is a 
 
 
 # Email me
-I don't want to put my email in plain-text, and
-[Cloudflare email address obfuscation](https://support.cloudflare.com/hc/en-us/articles/200170016-What-is-Email-Address-Obfuscation-)
-requires JavaScript enabled, so... the following is my email address, reversed then base64-encoded:
+I don't want to put my email in plain-text, and [Cloudflare email address obfuscation](https://support.cloudflare.com/hc/en-us/articles/200170016-What-is-Email-Address-Obfuscation-) requires JavaScript enabled which I am not fond of, so... the following is my email address, reversed then base64-encoded:
 
 ```
-bW9jLmxpYW1nQGdvbGIrbGVpY2FtYWtlcmVk
+bW9jLmxlaWNhbWtlcmVkQGVt
 ```
 
 To reveal it, base-64 decode it using one of the many base-64 decoders online
@@ -27,7 +25,7 @@ Python 2 or 3 installed you can paste this into a terminal:
 
 
 ```
-$ python -c "from base64 import b64decode as d; print(d('bW9jLmxpYW1nQGdvbGIrbGVpY2FtYWtlcmVk')[::-1])"
+$ python -c "from base64 import b64decode as d; print(d('bW9jLmxlaWNhbWtlcmVkQGVt')[::-1])"
 ```
 
 # Other links
