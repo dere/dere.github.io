@@ -33,3 +33,4 @@ $ python -c "from base64 import b64decode as d; print(d('bW9jLmxlaWNhbWtlcmVkQGV
 * [My resume](https://derekmaciel.com/derek-maciel-resume.pdf)
 * I am [dere on Github](https://github.com/dere)
 * I am [Derek M on Wikipedia](https://en.wikipedia.org/wiki/User:Derek_M)
+* My [PGP key](https://pgp.mit.edu/pks/lookup?op=vindex&search=0x4BDB5C6A1B96DC8C)
