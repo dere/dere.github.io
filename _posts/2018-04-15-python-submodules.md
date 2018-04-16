@@ -30,7 +30,7 @@ AttributeError: module 'email' has no attribute 'message'
 >>>
 ```
 
-Many Python developers know that importing a parent module will only import the child submodule if the parent's `__init__.py` imports the child for you. As a mistake on my part, I thought perhaps this wasn't necessary for the standard library, but thankfully the language is consistent for this case! Indeed, since `email` is a module in pure Python, the source is quite easy to read, and we can see in [__init__.py](https://github.com/python/cpython/blob/master/Lib/email/__init__.py) for that module that this behavior is deliberate (ostensibly for performance reasons):
+Many Python developers know that importing a parent module will only import the child submodule if the parent's `__init__.py` imports the child for you. As a mistake on my part, I thought perhaps this wasn't necessary for the standard library, but thankfully the language is consistent for this case! Indeed, since `email` is a module in pure Python, the source is quite easy to read, and we can see in [\__init__.py](https://github.com/python/cpython/blob/master/Lib/email/__init__.py) for that module that this behavior is deliberate (ostensibly for performance reasons):
 
 > Don't import Parser and Message as side-effects of importing email since those cascadingly import most of the rest of the email package.
 
