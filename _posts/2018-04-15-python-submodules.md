@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Importing Python Submodules"
-summary: "How to enable SSL on a Github pages custom domains with a free Cloudflare account."
+summary: "For the longest time I have been making a small mistake with the Python import system"
 date: 2018-04-15
 comments: true
 share: true
