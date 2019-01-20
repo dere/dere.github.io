@@ -1,28 +1,135 @@
----
-layout: default
----
-{% assign posts_count = (paginator.posts | size) %}
+<!doctype html>
+<html lang="en">
 
-<div class="home">
-  {% if posts_count > 0 %}
-    <div class="posts">
-      {% for post in paginator.posts %}
-        <div class="post py3">
-          <p class="post-meta">{{ post.date | date: site.date_format }}</p>
-          <a href="{{ post.url | prepend: site.baseurl }}" class="post-link"><h3 class="h1 post-title">{{ post.title }}</h3></a>
-          <span class="post-summary">
-            {% if post.summary %}
-              {{ post.summary }}
-            {% else %}
-              {{ post.excerpt }}
-            {% endif %}
-          </span>
-        </div>
-      {% endfor %}
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Derek Maciel</title>
+<style>
+/* ========== Minified Font Awesome via icomoon ========== */
+@font-face {
+  font-family: 'icomoon';
+  src:  url('fonts/icomoon.eot?m3of0f');
+  src:  url('fonts/icomoon.eot?m3of0f#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?m3of0f') format('truetype'),
+    url('fonts/icomoon.woff?m3of0f') format('woff'),
+    url('fonts/icomoon.svg?m3of0f#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  display: inline-block;
+  width: 1.25em;
+  text-align: center;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.icon-question:before {
+  content: "\f128";
+}
+.icon-pencil:before {
+  content: "\f040";
+}
+.icon-twitter:before {
+  content: "\f099";
+}
+.icon-github:before {
+  content: "\f09b";
+}
+.icon-envelope:before {
+  content: "\f0e0";
+}
+.icon-linkedin:before {
+  content: "\f0e1";
+}
+.icon-reddit-alien:before {
+  content: "\f281";
+}
+
+/* ========== Main css ========== */
+html {
+	font-size: 8px; /* Default size is mobile first */
+	text-align: center;
+	background-color: #fdf6e3;
+	color: #93a1a1;
+	font-family: Monospace;
+}
+body {
+  font-size: 1rem;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  text-align: center;
+}
+#wrapper {
+  margin-left: 2em;
+  margin-right: 2em;
+  width: auto;
+}
+/* https://en.wikipedia.org/wiki/Solarized_(color_scheme) */
+.green { color: #859900; }
+.blue { color: #268bd2; }
+.magenta { color: #d33682; }
+.violet { color:#6c71c4; }
+.yellow { color:#b58900; }
+#hello {
+  font-size: 2.5rem;
+}
+#name {
+  font-variant: small-caps;
+  font-size: 5rem;
+  line-height: 1;
+}
+#description {
+  font-size: 2rem;
+  margin-top: 1rem;
+}
+#links {
+  font-size: 2.5rem;
+  margin-top: 3rem;
+  line-height: 2;
+}
+#links a {
+  text-decoration: none;
+  color: #93a1a1;
+  margin: 0 1rem;
+  width: 1rem;
+}
+@media (min-width: 800px) {  html { font-size: 16px; }  } /* Desktop */
+</style>
+</head>
+
+<body>
+  <div id="wrapper">
+    <div id="hello"><span class="green">Hello</span>, I'm</div>
+    <div id="name"><span class="blue">Derek&nbsp;Maciel</span>,</div>
+    <div id="description">a <span class="yellow">computer&nbsp;science</span> <span class="violet">student</span> at <span class="magenta">Rutgers&nbsp;University</span>.</div>
+    <div id="links">
+	<!--
+      <div id="site-links">
+        <a href="#" title="About me"><span class="icon-question"></span></a>
+        <a href="#" title="My blog"><span class="icon-pencil"></span></a>
+  	  </div>
+	-->
+      <div id="social-media-links">
+        <!--<a href="#" title="Twitter"><span class="icon-twitter"></span></a>-->
+        <!--<a href="#" title="Email"><span class="icon-envelope"></span></a>-->
+	    <a href="https://reddit.com/u/derekmaciel" title="Reddit"><span class="icon-reddit-alien"></span></a>
+	    <a href="https://github.com/dere" title="GitHub"><span class="icon-github"></span></a>
+        <a href="https://www.linkedin.com/in/derekmaciel" title="LinkedIn"><span class="icon-linkedin"></span></a>
+	  </div>
     </div>
+  </div>
+</body>
 
-    {% include pagination.html %}
-  {% else %}
-    <h1 class='center'>{{ site.text.index.coming_soon }}</h1>
-  {% endif %}
-</div>
+</html>
