@@ -1,0 +1,15 @@
+---
+layout: base
+---
+
+<ul>
+{% for post in site.posts %}
+  <li>
+    {{ post.title | escape }}
+    {{ post.date | date: site.date_format }}
+    {{ post.url | relative_url }}
+    {{ post.excerpt }}
+  </li>
+
+{% endfor %}
+</ul>

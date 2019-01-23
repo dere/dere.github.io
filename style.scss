@@ -1,0 +1,108 @@
+---
+# this ensures Jekyll reads the file to be transformed into CSS later
+# only Main files contain this front matter, not partials.
+---
+
+@import 'icomoon';
+@import 'colors';
+
+$background-color: map-get($solarized-colors, base3);
+$text-color: map-get($solarized-colors, base0);
+$link-color: map-get($solarized-colors, base02);
+
+html {
+  font-size: 12px; /* Mobile first, overwritten later */
+}
+/* Desktop */
+@media (min-width: 800px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+
+html {
+  background-color: $background-color;
+  color: $text-color;
+  font-family: Monospace;
+}
+
+body {
+  font-size: 1rem;
+  margin: 0;
+  width: 100%;
+}
+
+main {
+  margin: 0 auto;
+  padding: 2rem;
+  max-width: 1000px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+}
+h1 {
+  font-size: 2.25rem;
+}
+h2 {
+  font-size: 2.0rem;
+}
+h3 {
+  font-size: 1.75rem;
+}
+h4 {
+  font-size: 1.5rem;
+}
+h5 {
+  font-size: 1.25rem;
+}
+h6 {
+  font-size: 1.0rem;
+}
+
+a {
+  color: $link-color;
+  text-decoration: underline;
+}
+
+a:hover {
+  color: lighten($link-color, 10);
+}
+
+#landing {
+  text-align: center;
+  // TODO: Vertical center
+
+  #hello {
+    font-size: 2.5rem;
+  }
+
+  #name {
+    font-variant: small-caps;
+    font-size: 5rem;
+    line-height: 1;
+  }
+
+  #description {
+    font-size: 2rem;
+    margin-top: 1rem;
+  }
+
+  #links {
+    font-size: 2.5rem;
+    margin-top: 3rem;
+    line-height: 2;
+
+    a {
+      text-decoration: none;
+      color: $text-color;
+      margin: 0 1rem;
+      width: 1rem;
+    }
+
+    a:hover {
+      color: lighten($text-color, 10);
+    }
+  }
+}

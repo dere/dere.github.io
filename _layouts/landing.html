@@ -1,0 +1,23 @@
+---
+layout: base
+---
+  <div id="landing">
+    <div id="hello"><span class="accent-green">Hello</span>, I'm</div>
+    <div id="name"><span class="accent-blue">Derek&nbsp;Maciel</span></div>
+    <div id="description">a <span class="accent-yellow">computer&nbsp;science</span> <span class="accent-violet">student</span> at <span class="accent-magenta">Rutgers&nbsp;University</span>.</div>
+    <div id="links">
+      {% for row in site.landing_page_links %}
+        <div id="{{ row.div_id }}">
+          {% for link in row.links %}
+            {% if link.url contains 'https://' or link.url contains 'http://' %}
+              {% assign url = link.url %}
+            {% else %}
+              {% assign url = link.url | absolute_url %}
+            {% endif %}
+            <a href="{{ url }}" title="{{ link.title}} "><span class="icon-{{ link.fa_icon }}"></span></a>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
