@@ -26,6 +26,7 @@
 
 # Build settings
 markdown: kramdown
+date_format: "%A, %B %e, %Y" # Thursday, January 24, 2019
 permalink: /:year-:month-:day/:title/
 #paginate: 20
 #paginate_path: "/blog/page:num/"

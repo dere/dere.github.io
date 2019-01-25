@@ -1,27 +1,34 @@
 /* https://en.wikipedia.org/wiki/Solarized_(color_scheme) */
-$solarized-colors: (
-  base03:    #002b36,
-  base02:    #073642,
-  base01:    #586e75,
-  base00:    #657b83,
-  base0:     #839496,
-  base1:     #93a1a1,
-  base2:     #eee8d5,
-  base3:     #fdf6e3,
-  "yellow":  #b58900,
-  "orange":  #cb4b16,
-  "red":     #dc322f,
-  "magenta": #d33682,
-  "violet":  #6c71c4,
-  "blue":    #268bd2,
-  "cyan":    #2aa198,
-  "green":   #859900
-);
+$base03:    #002b36;
+$base02:    #073642;
+$base01:    #586e75;
+$base00:    #657b83;
+$base0:     #839496;
+$base1:     #93a1a1;
+$base2:     #eee8d5;
+$base3:     #fdf6e3;
+$yellow:  #b58900;
+$orange:  #cb4b16;
+$red:     #dc322f;
+$magenta: #d33682;
+$violet:  #6c71c4;
+$blue:    #268bd2;
+$cyan:    #2aa198;
+$green:   #859900;
 
 // Create a .accent-xx class for each solarized color
 $accents: "yellow", "orange", "red", "magenta", "violet", "blue", "cyan", "green";
 @each $color in $accents {
   .accent-#{$color} {
-    color: map-get($solarized-colors, $color);
+    color: $color;
   }
 }
+
+.accent-yellow { color: $yellow; }
+.accent-orange { color: $orange; }
+.accent-red { color: $red; }
+.accent-magenta { color: $magenta; }
+.accent-violet { color: $violet; }
+.accent-blue { color: $blue; }
+.accent-cyan { color: $cyan; }
+.accent-green { color: $green; }

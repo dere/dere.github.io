@@ -103,7 +103,7 @@ calc.o: calc.asm
 
 clean:
 	rm -f calc.o calc
-        
+
 .INTERMEDIATE: calc.o
 ```
 
@@ -134,9 +134,13 @@ syscall number | arg1 | arg2 | arg3 |
 
 ## The call stack
 
-![The call stack](/images/2017-02-12-beginners-assembly/callstack.png){: .center-image}
-
 The call stack is a data structure that stores information about each function call. Each function call has its own section in the stack called a "frame," which stores some information about the current function call, such as the local variables of that function and the return address (where the program should jump to once the function is done executing).
+
+{% include figure.html
+  file="/images/2017-02-12-beginners-assembly/callstack.png"
+  alt="The call stack"
+  caption="The call stack"
+%}
 
 One confusing thing that I will note immediately is that the stack grows *downwards* in memory. When you add something to the top of the stack, it will be inserted at a memory address lower than the previous thing in the stack. In other words, as the stack grows, the memory address of the top of the stack decreases. To prevent confusion, I will not mention that fact unless it is absolutely necessary because we are working with memory addresses of items on the stack.
 
@@ -199,15 +203,27 @@ In order to be called, a subroutine must:
 
 The call stack after step 1:
 
-![The stack after step 1](/images/2017-02-12-beginners-assembly/callee-rules-step1.png){: .center-image}
+{% include figure.html
+  file="/images/2017-02-12-beginners-assembly/callee-rules-step1.png"
+  alt="The stack after step 1"
+  caption="The stack after step 1"
+%}
 
 The call stack after step 2:
 
-![The stack after step 2](/images/2017-02-12-beginners-assembly/callee-rules-step2.png){: .center-image}
+{% include figure.html
+  file="/images/2017-02-12-beginners-assembly/callee-rules-step2.png"
+  alt="The stack after step 2"
+  caption="The stack after step 2"
+%}
 
 The call stack once you're done with step 4:
 
-![The stack after step 4](/images/2017-02-12-beginners-assembly/callee-rules-step4.png){: .center-image}
+{% include figure.html
+  file="/images/2017-02-12-beginners-assembly/callee-rules-step4.png"
+  alt="The stack after step 4"
+  caption="The stack after step 4"
+%}
 
 You may notice a return address in each stack frame in those diagrams. Those are inserted into the stack automatically by `call`. A `ret` instruction pops the address on the top of the stack and jumps to that location. We don't have to use it for anything, I only include it to show why the function's local variables are 4 bytes above `ebp` but the function's arguments are 8 bytes below `ebp`.
 
@@ -239,7 +255,7 @@ _subtract:
     ret
 ```
 
-### `enter` and `leave`
+### Enter and Leave
 
 You may notice in the example above that a function will always start the same: `push ebp`, `mov ebp, esp`, and allocating space for local variables. x86 has a handy instruction to accomplish this for us: `enter a b`, where `a` is the number of bytes you'd like to allocate for local variables, and `b` is the "nesting level" which we will always leave at `0`. Additionally, a function always ends with `pop ebp` and `mov esp, ebp`[^3]. This can also be replaced with a single instruction: `leave`. Using these, our example above becomes:
 
@@ -286,8 +302,8 @@ _strlen:
     ; Here I'd save the callee-saved registers, but I won't be modifying any
     ; My function begins here
     mov eax, 0          ; length = 0
-    mov ecx, [ebp+8]    ; copy the function's first argument (pointer to the first 
-                        ; character of the string) into ecx (which is caller-saved, so 
+    mov ecx, [ebp+8]    ; copy the function's first argument (pointer to the first
+                        ; character of the string) into ecx (which is caller-saved, so
                         ; no need to save it)
 _strlen_loop_start:     ; this is a label we can jump to
     cmp byte [ecx], 0   ; dereference that pointer and compare it to null. By default,

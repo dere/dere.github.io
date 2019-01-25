@@ -7,11 +7,18 @@ comments: true
 share: true
 ---
 
+*May 1, 2018: Three months after writing this article,
+[it is now possible](https://github.blog/2018-05-01-github-pages-custom-domains-https/)
+for your Github Pages site to have SSL support directly from Github! The original
+article is preserved below.*
+
+--------
+
 My blog is hosted by Github Pages with a custom domain. While Github Pages can be served over SSL, it won't be if you use a custom domain, which was not ideal for me. However, it is easy to set this up with Cloudflare.
 
-Cloudflare is free for personal webpages like my own. Simply create an account and follow the instructions to copy your DNS settings to Cloudflare, then set your domain's nameservers to the ones provided by Cloudflare. Once done, I enabled "Always Use HTTPS" in the Crypto settings, which is applied to your entire domain. Additionally sometimes Cloudflare will require potentially malicious visitors to answer a CAPTCHA or become rate limited, but since I am not that concerned with that for my site, in my Firewall settings I changed my Security Level to "Essentially off." 
+Cloudflare is free for personal webpages like my own. Simply create an account and follow the instructions to copy your DNS settings to Cloudflare, then set your domain's nameservers to the ones provided by Cloudflare. Once done, I enabled "Always Use HTTPS" in the Crypto settings, which is applied to your entire domain. Additionally sometimes Cloudflare will require potentially malicious visitors to answer a CAPTCHA or become rate limited, but since I am not that concerned with that for my site, in my Firewall settings I changed my Security Level to "Essentially off."
 
-Since this requires you to use the DNS hosting provided by Cloudflare, this may or may not be ideal depending on your DNS needs. For me, Cloudflare supports everything I needed from the free DNS hosting provided by my registrar. Cloudflare lets you create as many MX, A, or other DNS records as you want. I was also using DDClient to periodically update an A record to the dynamic IP of my home network, and it was quick and painless to modify my DDClient configuration to work with Cloudflare.[^1] 
+Since this requires you to use the DNS hosting provided by Cloudflare, this may or may not be ideal depending on your DNS needs. For me, Cloudflare supports everything I needed from the free DNS hosting provided by my registrar. Cloudflare lets you create as many MX, A, or other DNS records as you want. I was also using DDClient to periodically update an A record to the dynamic IP of my home network, and it was quick and painless to modify my DDClient configuration to work with Cloudflare.[^1]
 
 [^1]: By default, A records will point to a Cloudflare CDN server instead of the IP address you entered for the record. If you do want unhindered access directly to the IP address like I did, it is quite simple: click the button next to the A record to change it from a "DNS and HTTP Proxy (CDN)" record to a "DNS only" record.
 
