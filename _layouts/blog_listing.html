@@ -1,0 +1,15 @@
+---
+layout: base
+---
+
+<ul id="post-listing">
+{% for post in site.posts %}
+  <li>
+    <header>
+      <h2><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h2>
+      <p>{{ post.date | date: site.date_format }}</p>
+    </header>
+    <p>{{ post.excerpt }}</p>
+  </li>
+{% endfor %}
+</ul>

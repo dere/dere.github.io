@@ -1,0 +1,198 @@
+---
+# this ensures Jekyll reads the file to be transformed into CSS later
+# only Main files contain this front matter, not partials.
+---
+
+@import 'icomoon';
+@import 'colors';
+@import 'syntax_highlight';
+
+$background-color: $base3;
+$text-color: $base01;
+$link-color: $blue;
+$link-color-visited: $orange;
+
+$article-title-color: $magenta;
+$article-header-meta-color: $base1;
+$article-subheading-color: $magenta;
+
+$section-divider-color: $base2;
+
+html {
+  font-size: 12px; // Mobile first
+}
+@media (min-width: 1000px) { // Desktop
+  html {
+    font-size: 16px;
+  }
+}
+
+
+html {
+  background-color: $background-color;
+  color: $text-color;
+  font-family: Monospace;
+}
+
+body {
+  font-size: 1.05rem;
+  margin: 0;
+  width: 100%;
+}
+
+main {
+  margin: 0 auto;
+  padding: 2rem;
+  max-width: 800px;
+}
+
+a {
+  color: $link-color;
+  text-decoration: underline;
+}
+
+a:hover {
+  color: darken($link-color, 10);
+}
+
+a:visited {
+  color: $link-color-visited;
+}
+
+article {
+  header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    font-size: 1rem;
+    border-bottom: 1px solid $section-divider-color;
+
+    h1 {
+      color: $article-title-color;
+      font-size: 2.75rem;
+      margin-bottom: 0.25rem;
+    }
+
+    p {
+      color: $article-header-meta-color;
+      margin: 0.1rem 0;
+    }
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+    color: $article-subheading-color;
+    margin-top: 1.5rem;
+    margin-bottom: 1.0rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  ul {
+    margin: 2rem 0;
+
+    li {
+      margin-top: 0.75rem;
+    }
+  }
+
+  figure {
+    text-align: center;
+    margin: 2rem 0;
+
+    figcaption {
+      font-style: italic;
+      margin-top: 0.75rem;
+    }
+  }
+
+  hr {
+    margin: 2rem auto;
+    border: 0;
+    height: 1px;
+    background-color: $base1;
+  }
+
+  .footnotes {
+    border-top: 1px solid $section-divider-color;
+    margin-top: 5rem;
+    padding-top: 1rem;
+  }
+}
+
+ul#post-listing {
+  padding: 0;
+
+  li {
+    list-style-type: none;
+
+    header {
+      h2 {
+        margin-bottom: 0.25rem;
+        font-size: 2rem;
+
+        a {
+          color: $article-title-color;
+          text-decoration: none;
+        }
+
+        a:hover {
+          color: darken($article-title-color, 10);
+        }
+      }
+
+
+      p {
+        color: $article-header-meta-color;
+        margin: 0.1rem 0;
+      }
+    }
+  }
+}
+
+#landing {
+  text-align: center;
+  color: $base0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateY(-50%) translateX(-50%);
+
+  #hello {
+    font-size: 2.5rem;
+  }
+
+  #name {
+    font-variant: small-caps;
+    font-size: 5rem;
+    line-height: 1;
+  }
+
+  #description {
+    font-size: 2rem;
+    margin-top: 1rem;
+  }
+
+  #links {
+    font-size: 2.5rem;
+    margin-top: 3rem;
+    line-height: 2;
+
+    a {
+      text-decoration: none;
+      color: $base0;
+      margin: 0 1rem;
+      width: 1rem;
+    }
+
+    a:hover {
+      color: darken($base0, 10);
+    }
+  }
+}

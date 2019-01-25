@@ -1,0 +1,22 @@
+---
+layout: base
+---
+
+<article>
+  <header>
+    <h1>{{ page.title }}</h1>
+    {% if page.date or page.tags %}
+      <p>
+        {% if page.date %}
+          Posted {{ page.date | date: site.date_format }}. 
+        {% endif %}
+        {% if page.tags %}
+          Tagged: {{ page.tags | join: ", " }}
+        {% endif %}
+      </p>
+    {% endif %}
+  </header>
+
+{{ content }}
+
+</article>
