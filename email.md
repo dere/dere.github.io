@@ -10,7 +10,7 @@ requires JavaScript enabled which I am not fond of, so... the following is my
 email address, reversed then base64-encoded:
 
 ```
-bW9jLmxlaWNhbWtlcmVkQGVt
+bW9jLmxlaWNhbWtlcmVkQHNlaXJpdXFuaQ==
 ```
 
 To reveal it, base-64 decode it using one of the many base-64 decoders online
@@ -18,5 +18,5 @@ To reveal it, base-64 decode it using one of the many base-64 decoders online
 you have Python 2 or 3 installed you can simply paste this into a terminal:
 
 ```
-$ python -c "from base64 import b64decode as d; print(d('bW9jLmxlaWNhbWtlcmVkQGVt')[::-1])"
+$ python -c "from base64 import b64decode as d; print(d('bW9jLmxlaWNhbWtlcmVkQHNlaXJpdXFuaQ==')[::-1])"
 ```
