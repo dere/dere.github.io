@@ -48,14 +48,11 @@ landing_page_links:
       - title: Email
         url: /email/
         fa_icon: envelope
-      - title: Reddit
-        url: https://www.reddit.com/u/derekmaciel
-        fa_icon: reddit-alien
       - title: GitHub
-        url: https://github.com/dere
+        url: https://github.com/gurchik
         fa_icon: github
       - title: LinkedIn
-        url: https://www.linkedin.com/in/derekmaciel
+        url: https://www.linkedin.com/in/derekgurchik
         fa_icon: linkedin
 
 sass:
